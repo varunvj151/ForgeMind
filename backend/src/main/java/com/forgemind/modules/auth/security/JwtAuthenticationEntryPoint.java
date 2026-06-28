@@ -1,7 +1,7 @@
 package com.forgemind.modules.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.forgemind.common.dto.ErrorResponse;
+import com.forgemind.common.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +44,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "UNAUTHORIZED",
-                "Authentication required. Please provide a valid Bearer token.",
-                HttpStatus.UNAUTHORIZED.value(),
-                request.getRequestURI()
-        );
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(java.time.Instant.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .code("UNAUTHORIZED")
+                .message("Authentication required. Please provide a valid Bearer token.")
+                .path(request.getRequestURI())
+                .build();
 
         objectMapper.writeValue(response.getOutputStream(), errorResponse);
     }

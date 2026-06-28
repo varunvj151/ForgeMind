@@ -1,6 +1,6 @@
 package com.forgemind.modules.auth.controller;
 
-import com.forgemind.common.dto.ErrorResponse;
+import com.forgemind.common.exception.ErrorResponse;
 import com.forgemind.modules.auth.dto.LoginRequest;
 import com.forgemind.modules.auth.dto.LoginResponse;
 import com.forgemind.modules.auth.dto.RegisterRequest;

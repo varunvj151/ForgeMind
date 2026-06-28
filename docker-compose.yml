@@ -56,9 +56,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-forgemind}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-forgemind}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-forgemind_dev_password}
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       APP_ENV: ${APP_ENV:-development}
       JWT_SECRET: ${JWT_SECRET:-change_me}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
