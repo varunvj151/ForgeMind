@@ -1,0 +1,122 @@
+spring:
+  application:
+    name: forgemind-backend
+
+  # ── Datasource ───────────────────────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:127.0.0.1}:${POSTGRES_PORT:5432}/${POSTGRES_DB:forgemind}
+    username: ${POSTGRES_USER:forgemind}
+    password: ${POSTGRES_PASSWORD:forgemind_dev_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      connection-timeout: 20000
+      pool-name: ForgemindHikariPool
+
+  # ── JPA ──────────────────────────────────────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: validate          # Flyway owns schema — never let Hibernate mutate it
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+    open-in-view: false           # Disable OSIV — prevents lazy-loading in controllers
+
+  # ── Flyway ───────────────────────────────────────────────────────────────────
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 1
+
+  # ── Security (permissive for Phase 1 — tightened in Phase 2) ─────────────────
+  security:
+    user:
+      name: actuator
+      password: actuator_dev_only
+
+  # ── WebSocket (STOMP) ────────────────────────────────────────────────────────
+  websocket:
+    enabled: true
+
+# ── Server ───────────────────────────────────────────────────────────────────
+server:
+  port: ${APP_PORT:8080}
+  servlet:
+    context-path: /
+  error:
+    include-message: on-param       # Only include error message when ?message is in query
+    include-stacktrace: never
+    include-binding-errors: on-param
+
+# ── Actuator ─────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true
+
+# ── SpringDoc / Swagger ───────────────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+  info:
+    title: ForgeMind API
+    description: ForgeMind — AI Software Engineering Platform REST API
+    version: v1
+
+# ── Application Properties ────────────────────────────────────────────────────
+app:
+  env: ${APP_ENV:development}
+  workspace:
+    base-path: ${WORKSPACE_BASE_PATH:/tmp/forgemind/workspaces}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  jwt:
+    secret: ${JWT_SECRET:changeme_this_is_insecure_replace_in_production}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+logging:
+  level:
+    root: INFO
+    com.forgemind: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p){highlight} %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n%wEx"
+  file:
+    name: logs/forgemind.log

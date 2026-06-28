@@ -1,0 +1,43 @@
+# Test-profile application configuration
+# Uses H2 in-memory database so tests never require external services
+spring:
+  datasource:
+    url: jdbc:h2:mem:forgemind_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  flyway:
+    enabled: false   # Disable Flyway in tests; let Hibernate create schema via ddl-auto
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    user:
+      name: test
+      password: test
+
+logging:
+  level:
+    root: WARN
+    com.forgemind: DEBUG
+
+# ── JWT properties required by JwtProperties @ConfigurationProperties ─────────
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LW11c3QtYmUtYXQtbGVhc3QtMzItY2hhcmFjdGVycy1sb25n
+    expiration-ms: 3600000
+    refresh-expiration-ms: 604800000
+
+management:
+  health:
+    redis:
+      enabled: false
+
