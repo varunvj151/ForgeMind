@@ -29,48 +29,66 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Operation(summary = "Get current user profile")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Profile returned"),
-            @ApiResponse(responseCode = "401", description = "Unauthorised", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser() {
-        return ResponseEntity.ok(userService.getCurrentUser());
-    }
+  @Operation(summary = "Get current user profile")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Profile returned"),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping("/me")
+  public ResponseEntity<UserResponse> getCurrentUser() {
+    return ResponseEntity.ok(userService.getCurrentUser());
+  }
 
-    @Operation(summary = "Update current user profile")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Profile updated"),
-            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @PutMapping("/me")
-    public ResponseEntity<UserResponse> updateProfile(@Valid @RequestBody UpdateUserRequest request) {
-        return ResponseEntity.ok(userService.updateProfile(request));
-    }
+  @Operation(summary = "Update current user profile")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Profile updated"),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Validation error",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @PutMapping("/me")
+  public ResponseEntity<UserResponse> updateProfile(@Valid @RequestBody UpdateUserRequest request) {
+    return ResponseEntity.ok(userService.updateProfile(request));
+  }
 
-    @Operation(summary = "Deactivate current user account")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Account deactivated"),
-            @ApiResponse(responseCode = "401", description = "Unauthorised", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @DeleteMapping("/me")
-    public ResponseEntity<Void> deactivateAccount() {
-        userService.deactivateAccount();
-        return ResponseEntity.noContent().build();
-    }
+  @Operation(summary = "Deactivate current user account")
+  @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Account deactivated"),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @DeleteMapping("/me")
+  public ResponseEntity<Void> deactivateAccount() {
+    userService.deactivateAccount();
+    return ResponseEntity.noContent().build();
+  }
 
-    @Operation(summary = "Get user by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User found"),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
+  @Operation(summary = "Get user by ID")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "User found"),
+    @ApiResponse(
+        responseCode = "404",
+        description = "User not found",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping("/{id}")
+  public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    return ResponseEntity.ok(userService.getUserById(id));
+  }
 }

@@ -1,4 +1,3 @@
-com\forgemind\config\websocket\WebSocketConfig.class
 com\forgemind\modules\auth\service\UserServiceImpl.class
 com\forgemind\modules\auth\security\UserDetailsServiceImpl.class
 com\forgemind\modules\auth\security\JwtService.class

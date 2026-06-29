@@ -1,0 +1,12 @@
+com\forgemind\modules\auth\service\AuthServiceTest.class
+com\forgemind\modules\auth\repository\UserRepositoryTest.class
+com\forgemind\modules\auth\controller\AuthControllerLoginIntegrationTest.class
+com\forgemind\modules\project\service\ProjectServiceImplTest.class
+com\forgemind\config\BaseIntegrationTest.class
+com\forgemind\ForgemindApplicationTests.class
+com\forgemind\modules\auth\repository\RoleRepositoryTest.class
+com\forgemind\modules\auth\service\AuthServiceLoginTest.class
+com\forgemind\modules\auth\controller\AuthControllerIntegrationTest.class
+com\forgemind\modules\task\service\TaskServiceImplTest.class
+com\forgemind\modules\auth\service\UserServiceImplTest.class
+com\forgemind\modules\project\controller\ProjectControllerIntegrationTest.class

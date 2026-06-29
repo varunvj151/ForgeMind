@@ -4,6 +4,4 @@ import com.forgemind.modules.task.entity.TaskPriority;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateTaskPriorityRequest(
-        @NotNull(message = "Priority is required")
-        TaskPriority priority
-) {}
+    @NotNull(message = "Priority is required") TaskPriority priority) {}

@@ -14,28 +14,28 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TeamMapper {
 
-    TeamResponse toResponse(Team team);
+  TeamResponse toResponse(Team team);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "members", ignore = true)
-    Team toEntity(TeamRequest request);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  @Mapping(target = "members", ignore = true)
+  Team toEntity(TeamRequest request);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "members", ignore = true)
-    void updateEntityFromRequest(TeamRequest request, @MappingTarget Team team);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  @Mapping(target = "members", ignore = true)
+  void updateEntityFromRequest(TeamRequest request, @MappingTarget Team team);
 
-    @Mapping(target = "teamId", source = "team.id")
-    @Mapping(target = "user", source = "user")
-    TeamMemberResponse toResponse(TeamMember member);
+  @Mapping(target = "teamId", source = "team.id")
+  @Mapping(target = "user", source = "user")
+  TeamMemberResponse toResponse(TeamMember member);
 
-    default UserResponse toUserResponse(com.forgemind.modules.auth.entity.User user) {
-        if (user == null) {
-            return null;
-        }
-        return UserResponse.fromUser(user);
+  default UserResponse toUserResponse(com.forgemind.modules.auth.entity.User user) {
+    if (user == null) {
+      return null;
     }
+    return UserResponse.fromUser(user);
+  }
 }

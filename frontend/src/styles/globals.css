@@ -1,48 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System CSS Custom Properties ──────────────────────────────────── */
-/* Extends Tailwind with semantic tokens aligned to 19-design-system.md       */
-
+/* ── Semantic CSS tokens — drives the entire design system ──────────────── */
 @layer base {
   :root {
-    /* Color scheme: dark-primary palette */
-    --color-bg-primary: 15 15 23;          /* #0F0F17 - deepest background */
-    --color-bg-secondary: 22 22 35;        /* #161623 - card/panel background */
-    --color-bg-tertiary: 30 30 48;         /* #1E1E30 - elevated surfaces */
-    --color-bg-interactive: 38 38 62;      /* #26263E - hover states */
+    /* Light mode tokens */
+    --background: 0 0% 99%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 94%;
+    --accent-foreground: 220 9% 46%;
+    --border: 220 13% 91%;
+    --sidebar: 0 0% 98%;
+  }
 
-    /* Accent: electric purple-blue gradient */
-    --color-accent-primary: 124 58 237;    /* violet-600 */
-    --color-accent-secondary: 79 70 229;   /* indigo-600 */
-    --color-accent-glow: 139 92 246;       /* violet-500 */
-
-    /* Text */
-    --color-text-primary: 240 240 255;     /* near-white */
-    --color-text-secondary: 160 160 200;   /* muted */
-    --color-text-muted: 100 100 140;       /* very muted */
-
-    /* Status */
-    --color-success: 34 197 94;            /* green-500 */
-    --color-warning: 234 179 8;            /* yellow-500 */
-    --color-error: 239 68 68;              /* red-500 */
-    --color-info: 59 130 246;              /* blue-500 */
-
-    /* Borders */
-    --color-border: 45 45 70;
-    --color-border-subtle: 35 35 55;
-
-    /* Radius tokens */
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
+  .dark {
+    /* Dark mode tokens */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 7%;
+    --card-foreground: 213 31% 91%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 263 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 222 47% 12%;
+    --accent-foreground: 213 31% 91%;
+    --border: 216 34% 17%;
+    --sidebar: 224 71% 5%;
   }
 
   * {
-    border-color: rgb(var(--color-border));
     box-sizing: border-box;
+    border-color: hsl(var(--border));
   }
 
   html {
@@ -52,46 +57,42 @@
   }
 
   body {
-    background-color: rgb(var(--color-bg-primary));
-    color: rgb(var(--color-text-primary));
-    font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
   }
 
-  /* Custom scrollbar — dark theme */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgb(var(--color-bg-secondary));
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgb(var(--color-border));
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--color-text-muted));
-  }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
 }
 
-/* ── Utility Layer ─────────────────────────────────────────────────────────── */
+/* ── Tailwind utility extension ─────────────────────────────────────────── */
 @layer utilities {
+  .bg-background    { background-color: hsl(var(--background)); }
+  .bg-card          { background-color: hsl(var(--card)); }
+  .bg-sidebar       { background-color: hsl(var(--sidebar)); }
+  .bg-popover       { background-color: hsl(var(--popover)); }
+  .bg-accent        { background-color: hsl(var(--accent)); }
+  .bg-primary       { background-color: hsl(var(--primary)); }
+
+  .text-foreground        { color: hsl(var(--foreground)); }
+  .text-muted-foreground  { color: hsl(var(--muted-foreground)); }
+  .text-primary           { color: hsl(var(--primary)); }
+
+  .border-border { border-color: hsl(var(--border)); }
+
   .glass {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .glow-accent {
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
-  }
-
   .text-gradient {
-    background: linear-gradient(135deg, rgb(var(--color-accent-glow)), rgb(var(--color-accent-secondary)));
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

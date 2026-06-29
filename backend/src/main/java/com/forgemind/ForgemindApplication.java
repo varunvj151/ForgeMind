@@ -9,10 +9,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * ForgeMind Application Entry Point.
  *
  * <p>Bootstraps the Spring Boot application with:
+ *
  * <ul>
- *   <li>Component scanning across all {@code com.forgemind} packages</li>
- *   <li>Async task execution support (required for AI agent pipeline in Phase 4)</li>
- *   <li>Scheduling support (required for background jobs in Phase 2+)</li>
+ *   <li>Component scanning across all {@code com.forgemind} packages
+ *   <li>Async task execution support (required for AI agent pipeline in Phase 4)
+ *   <li>Scheduling support (required for background jobs in Phase 2+)
  * </ul>
  */
 @SpringBootApplication
@@ -20,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ForgemindApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ForgemindApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(ForgemindApplication.class, args);
+  }
 }

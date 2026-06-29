@@ -10,18 +10,14 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ActivityMapper {
 
-    @Mapping(target = "actor", source = "actor")
-    ActivityResponse toResponse(Activity activity);
+  @Mapping(target = "actor", source = "actor")
+  ActivityResponse toResponse(Activity activity);
 
-    default ActivityResponse.ActorInfo toActorInfo(User user) {
-        if (user == null) {
-            return null;
-        }
-        return new ActivityResponse.ActorInfo(
-                user.getId(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName()
-        );
+  default ActivityResponse.ActorInfo toActorInfo(User user) {
+    if (user == null) {
+      return null;
     }
+    return new ActivityResponse.ActorInfo(
+        user.getId(), user.getUsername(), user.getFirstName(), user.getLastName());
+  }
 }

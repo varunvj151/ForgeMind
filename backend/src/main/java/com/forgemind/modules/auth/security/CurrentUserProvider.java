@@ -8,31 +8,35 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-/**
- * Utility for retrieving the currently authenticated user.
- */
+/** Utility for retrieving the currently authenticated user. */
 @Component
 @RequiredArgsConstructor
 public class CurrentUserProvider {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    /**
-     * Gets the currently authenticated User entity.
-     * 
-     * @return the authenticated User
-     * @throws ResourceNotFoundException if no user is authenticated or the user no longer exists
-     */
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  /**
+   * Gets the currently authenticated User entity.
+   *
+   * @return the authenticated User
+   * @throws ResourceNotFoundException if no user is authenticated or the user no longer exists
+   */
+  public User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated() 
-                || "anonymousUser".equals(authentication.getPrincipal())) {
-            throw new ResourceNotFoundException("UNAUTHORIZED", "No authenticated user found in context.");
-        }
-
-        String username = authentication.getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND", "Authenticated user not found in database."));
+    if (authentication == null
+        || !authentication.isAuthenticated()
+        || "anonymousUser".equals(authentication.getPrincipal())) {
+      throw new ResourceNotFoundException(
+          "UNAUTHORIZED", "No authenticated user found in context.");
     }
+
+    String username = authentication.getName();
+    return userRepository
+        .findByUsername(username)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    "USER_NOT_FOUND", "Authenticated user not found in database."));
+  }
 }

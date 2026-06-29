@@ -1,25 +1,44 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      colors: {
-        background: 'rgb(var(--color-bg-primary) / <alpha-value>)',
-        surface: 'rgb(var(--color-bg-secondary) / <alpha-value>)',
-        panel: 'rgb(var(--color-bg-tertiary) / <alpha-value>)',
-        interactive: 'rgb(var(--color-bg-interactive) / <alpha-value>)',
-        primary: 'rgb(var(--color-accent-primary) / <alpha-value>)',
-        secondary: 'rgb(var(--color-accent-secondary) / <alpha-value>)',
-        border: 'rgb(var(--color-border) / <alpha-value>)',
-        'border-subtle': 'rgb(var(--color-border-subtle) / <alpha-value>)',
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
-      textColor: {
-        primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
-        secondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
-        muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+      colors: {
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+          foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
+          foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
+          foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
+          foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
+          foreground: 'hsl(var(--accent-foreground) / <alpha-value>)',
+        },
+        border: 'hsl(var(--border) / <alpha-value>)',
+        sidebar: 'hsl(var(--sidebar) / <alpha-value>)',
       },
     },
   },

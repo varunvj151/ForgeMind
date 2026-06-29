@@ -1,0 +1,12 @@
+{
+  "name": "forgemind-root",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint:frontend": "cd frontend && npx lint-staged",
+    "format:backend": "cd backend && mvn spotless:apply"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11"
+  }
+}

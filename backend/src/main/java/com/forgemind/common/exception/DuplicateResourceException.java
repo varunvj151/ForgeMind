@@ -1,18 +1,16 @@
 package com.forgemind.common.exception;
 
-/**
- * Exception thrown when a resource already exists and cannot be duplicated.
- */
+/** Exception thrown when a resource already exists and cannot be duplicated. */
 public class DuplicateResourceException extends RuntimeException {
 
-    private final String code;
+  private final String code;
 
-    public DuplicateResourceException(String code, String message) {
-        super(message);
-        this.code = code;
-    }
+  public DuplicateResourceException(String code, String message) {
+    super(message);
+    this.code = code;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public String getCode() {
+    return code;
+  }
 }

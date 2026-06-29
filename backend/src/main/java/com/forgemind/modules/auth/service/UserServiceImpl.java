@@ -16,44 +16,49 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final CurrentUserProvider currentUserProvider;
+  private final UserRepository userRepository;
+  private final CurrentUserProvider currentUserProvider;
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserResponse getCurrentUser() {
-        User user = currentUserProvider.getCurrentUser();
-        return UserResponse.fromUser(user);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public UserResponse getCurrentUser() {
+    User user = currentUserProvider.getCurrentUser();
+    return UserResponse.fromUser(user);
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND", "User not found with id: " + id));
-        return UserResponse.fromUser(user);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public UserResponse getUserById(Long id) {
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "USER_NOT_FOUND", "User not found with id: " + id));
+    return UserResponse.fromUser(user);
+  }
 
-    @Override
-    @Transactional
-    public UserResponse updateProfile(UpdateUserRequest request) {
-        User user = currentUserProvider.getCurrentUser();
-        
-        user.setFirstName(request.firstName().trim());
-        user.setLastName(request.lastName().trim());
-        
-        User saved = userRepository.save(user);
-        log.info("User {} updated their profile", user.getUsername());
-        
-        return UserResponse.fromUser(saved);
-    }
+  @Override
+  @Transactional
+  public UserResponse updateProfile(UpdateUserRequest request) {
+    User user = currentUserProvider.getCurrentUser();
 
-    @Override
-    @Transactional
-    public void deactivateAccount() {
-        User user = currentUserProvider.getCurrentUser();
-        user.setEnabled(false);
-        userRepository.save(user);
-        log.info("User {} deactivated their account", user.getUsername());
-    }
+    user.setFirstName(request.firstName().trim());
+    user.setLastName(request.lastName().trim());
+
+    User saved = userRepository.save(user);
+    log.info("User {} updated their profile", user.getUsername());
+
+    return UserResponse.fromUser(saved);
+  }
+
+  @Override
+  @Transactional
+  public void deactivateAccount() {
+    User user = currentUserProvider.getCurrentUser();
+    user.setEnabled(false);
+    userRepository.save(user);
+    log.info("User {} deactivated their account", user.getUsername());
+  }
 }

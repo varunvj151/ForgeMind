@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: forgemind-postgres-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-forgemind}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prod_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-forgemind_prod}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - forgemind-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-forgemind}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: forgemind-redis-prod
+    networks:
+      - forgemind-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: forgemind-backend:prod
+    container_name: forgemind-backend-prod
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-forgemind}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-prod_secure_password}
+      - POSTGRES_DB=${POSTGRES_DB:-forgemind_prod}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-changeme_prod_secret_must_be_very_long}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-https://yourdomain.com}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - forgemind-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: forgemind-frontend:prod
+    container_name: forgemind-frontend-prod
+    ports:
+      - "80:80"
+    networks:
+      - forgemind-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  forgemind-network:
+    external: true
+    name: forgemind-network

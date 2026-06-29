@@ -1,10 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './styles/globals.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AppProvider } from '@/app/providers/AppProvider';
+import { AppRouter } from '@/app/router/AppRouter';
+import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import '@/styles/globals.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <ErrorBoundary>
+      <AppProvider>
+        <AppRouter />
+      </AppProvider>
+    </ErrorBoundary>
+  </StrictMode>
 );

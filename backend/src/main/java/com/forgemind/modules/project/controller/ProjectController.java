@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,18 +32,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.UUID;
-
 /**
  * REST controller for Project management.
  *
- * <p>This controller contains no business logic. All operations are delegated
- * directly to {@link ProjectService}. It is responsible only for:
+ * <p>This controller contains no business logic. All operations are delegated directly to {@link
+ * ProjectService}. It is responsible only for:
+ *
  * <ul>
- *   <li>Accepting and validating request bodies</li>
- *   <li>Delegating to the service layer</li>
- *   <li>Returning the correct HTTP status codes</li>
+ *   <li>Accepting and validating request bodies
+ *   <li>Delegating to the service layer
+ *   <li>Returning the correct HTTP status codes
  * </ul>
  */
 @Slf4j
@@ -52,116 +52,132 @@ import java.util.UUID;
 @SecurityRequirement(name = "bearerAuth")
 public class ProjectController {
 
-    private final ProjectService projectService;
+  private final ProjectService projectService;
 
-    // ── POST /api/projects ────────────────────────────────────────────────────
+  // ── POST /api/projects ────────────────────────────────────────────────────
 
-    @Operation(
-            summary     = "Create a project",
-            description = "Creates a new project and returns it with its assigned ID and timestamps."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Project created"),
-            @ApiResponse(responseCode = "400", description = "Validation error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised — missing or invalid JWT",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(
-            @Valid @RequestBody ProjectRequest request) {
+  @Operation(
+      summary = "Create a project",
+      description = "Creates a new project and returns it with its assigned ID and timestamps.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Project created"),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Validation error",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised — missing or invalid JWT",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @PostMapping
+  public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest request) {
 
-        ProjectResponse created = projectService.createProject(request);
+    ProjectResponse created = projectService.createProject(request);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(created.id())
-                .toUri();
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(created.id())
+            .toUri();
 
-        return ResponseEntity.created(location).body(created);
-    }
+    return ResponseEntity.created(location).body(created);
+  }
 
-    // ── GET /api/projects ─────────────────────────────────────────────────────
+  // ── GET /api/projects ─────────────────────────────────────────────────────
 
-    @Operation(
-            summary     = "List all projects",
-            description = "Returns a paginated, sorted list of all projects. "
-                        + "Use ?page=0&size=20&sort=name,asc to customise."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List returned"),
-            @ApiResponse(responseCode = "401", description = "Unauthorised",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping
-    public ResponseEntity<Page<ProjectResponse>> getAllProjects(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable) {
+  @Operation(
+      summary = "List all projects",
+      description =
+          "Returns a paginated, sorted list of all projects. "
+              + "Use ?page=0&size=20&sort=name,asc to customise.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "List returned"),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping
+  public ResponseEntity<Page<ProjectResponse>> getAllProjects(
+      @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+          Pageable pageable) {
 
-        return ResponseEntity.ok(projectService.getAllProjects(pageable));
-    }
+    return ResponseEntity.ok(projectService.getAllProjects(pageable));
+  }
 
-    // ── GET /api/projects/{id} ────────────────────────────────────────────────
+  // ── GET /api/projects/{id} ────────────────────────────────────────────────
 
-    @Operation(
-            summary     = "Get project by ID",
-            description = "Returns a single project identified by its UUID."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Project found"),
-            @ApiResponse(responseCode = "404", description = "Project not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping("/{id}")
-    public ResponseEntity<ProjectResponse> getProjectById(
-            @Parameter(description = "Project UUID") @PathVariable UUID id) {
+  @Operation(
+      summary = "Get project by ID",
+      description = "Returns a single project identified by its UUID.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Project found"),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Project not found",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping("/{id}")
+  public ResponseEntity<ProjectResponse> getProjectById(
+      @Parameter(description = "Project UUID") @PathVariable UUID id) {
 
-        return ResponseEntity.ok(projectService.getProjectById(id));
-    }
+    return ResponseEntity.ok(projectService.getProjectById(id));
+  }
 
-    // ── PUT /api/projects/{id} ────────────────────────────────────────────────
+  // ── PUT /api/projects/{id} ────────────────────────────────────────────────
 
-    @Operation(
-            summary     = "Update a project",
-            description = "Replaces an existing project's data. ID and timestamps remain unchanged."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Project updated"),
-            @ApiResponse(responseCode = "400", description = "Validation error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Project not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectResponse> updateProject(
-            @Parameter(description = "Project UUID") @PathVariable UUID id,
-            @Valid @RequestBody ProjectRequest request) {
+  @Operation(
+      summary = "Update a project",
+      description = "Replaces an existing project's data. ID and timestamps remain unchanged.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Project updated"),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Validation error",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Project not found",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @PutMapping("/{id}")
+  public ResponseEntity<ProjectResponse> updateProject(
+      @Parameter(description = "Project UUID") @PathVariable UUID id,
+      @Valid @RequestBody ProjectRequest request) {
 
-        return ResponseEntity.ok(projectService.updateProject(id, request));
-    }
+    return ResponseEntity.ok(projectService.updateProject(id, request));
+  }
 
-    // ── DELETE /api/projects/{id} ─────────────────────────────────────────────
+  // ── DELETE /api/projects/{id} ─────────────────────────────────────────────
 
-    @Operation(
-            summary     = "Delete a project",
-            description = "Permanently deletes a project. This action cannot be undone."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Project deleted"),
-            @ApiResponse(responseCode = "404", description = "Project not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorised",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(
-            @Parameter(description = "Project UUID") @PathVariable UUID id) {
+  @Operation(
+      summary = "Delete a project",
+      description = "Permanently deletes a project. This action cannot be undone.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Project deleted"),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Project not found",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorised",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteProject(
+      @Parameter(description = "Project UUID") @PathVariable UUID id) {
 
-        projectService.deleteProject(id);
-        return ResponseEntity.noContent().build();
-    }
+    projectService.deleteProject(id);
+    return ResponseEntity.noContent().build();
+  }
 }

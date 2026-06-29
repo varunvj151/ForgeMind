@@ -5,23 +5,15 @@ import com.forgemind.modules.auth.dto.UserResponse;
 
 public interface UserService {
 
-    /**
-     * Gets the profile of the currently authenticated user.
-     */
-    UserResponse getCurrentUser();
+  /** Gets the profile of the currently authenticated user. */
+  UserResponse getCurrentUser();
 
-    /**
-     * Gets a user profile by ID.
-     */
-    UserResponse getUserById(Long id);
+  /** Gets a user profile by ID. */
+  UserResponse getUserById(Long id);
 
-    /**
-     * Updates the profile of the currently authenticated user.
-     */
-    UserResponse updateProfile(UpdateUserRequest request);
+  /** Updates the profile of the currently authenticated user. */
+  UserResponse updateProfile(UpdateUserRequest request);
 
-    /**
-     * Disables (soft deletes) the currently authenticated user's account.
-     */
-    void deactivateAccount();
+  /** Disables (soft deletes) the currently authenticated user's account. */
+  void deactivateAccount();
 }
