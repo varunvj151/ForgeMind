@@ -164,8 +164,9 @@ public class GlobalExceptionHandler {
 
     ErrorResponse errorResponse =
         ErrorResponse.builder()
+            .timestamp(Instant.now())
             .status(HttpStatus.BAD_GATEWAY.value())
-            .error(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+            .code(HttpStatus.BAD_GATEWAY.getReasonPhrase())
             .message("AI service is currently unavailable or returned an error.")
             .path(request.getRequestURI())
             .build();
@@ -180,8 +181,9 @@ public class GlobalExceptionHandler {
 
     ErrorResponse errorResponse =
         ErrorResponse.builder()
+            .timestamp(Instant.now())
             .status(HttpStatus.TOO_MANY_REQUESTS.value())
-            .error(HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase())
+            .code(HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase())
             .message("AI service rate limit exceeded. Please try again later.")
             .path(request.getRequestURI())
             .build();

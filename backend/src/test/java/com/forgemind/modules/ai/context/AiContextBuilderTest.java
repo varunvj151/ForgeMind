@@ -42,14 +42,32 @@ class AiContextBuilderTest {
     void buildProjectContext_ShouldGatherProjectAndTasks() {
         UUID projectId = UUID.randomUUID();
         
-        ProjectResponse project = new ProjectResponse();
-        project.setId(projectId);
-        project.setName("Test Project");
-        
-        TaskResponse task = new TaskResponse();
-        task.setId(UUID.randomUUID());
-        task.setTitle("Test Task");
-        
+        ProjectResponse project =
+            new ProjectResponse(
+                projectId,
+                "Test Project",
+                "desc",
+                com.forgemind.modules.project.entity.ProjectStatus.ACTIVE,
+                java.time.Instant.now(),
+                java.time.Instant.now(),
+                1L,
+                "owner");
+
+        TaskResponse task =
+            new TaskResponse(
+                UUID.randomUUID(),
+                projectId,
+                "Test Project",
+                "Test Task",
+                "desc",
+                com.forgemind.modules.task.entity.TaskStatus.TODO,
+                com.forgemind.modules.task.entity.TaskPriority.MEDIUM,
+                null,
+                null,
+                null,
+                java.time.Instant.now(),
+                java.time.Instant.now());
+
         when(projectService.getProjectById(projectId)).thenReturn(project);
         when(taskService.listProjectTasks(eq(projectId), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(task)));
 
