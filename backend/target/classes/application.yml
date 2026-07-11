@@ -108,6 +108,13 @@ app:
     secret: ${JWT_SECRET:changeme_this_is_insecure_replace_in_production}
     expiration-ms: ${JWT_EXPIRATION_MS:3600000}
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+  ai:
+    provider: ${AI_PROVIDER:MOCK}
+    api-key: ${AI_API_KEY:}
+    model: ${AI_MODEL:gemini-1.5-pro-latest}
+    temperature: ${AI_TEMPERATURE:0.7}
+    max-tokens: ${AI_MAX_TOKENS:2048}
+    timeout-ms: ${AI_TIMEOUT_MS:30000}
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:

@@ -1,5 +1,7 @@
 package com.forgemind.common.exception;
 
+import com.forgemind.modules.ai.exception.AiProviderException;
+import com.forgemind.modules.ai.exception.AiRateLimitException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.time.Instant;
@@ -153,6 +155,38 @@ public class GlobalExceptionHandler {
             .build();
 
     return ResponseEntity.status(ex.getHttpStatus()).body(response);
+  }
+
+  @ExceptionHandler(AiProviderException.class)
+  public ResponseEntity<ErrorResponse> handleAiProviderException(
+      AiProviderException ex, HttpServletRequest request) {
+    log.error("AI provider error: {}", ex.getMessage());
+
+    ErrorResponse errorResponse =
+        ErrorResponse.builder()
+            .status(HttpStatus.BAD_GATEWAY.value())
+            .error(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+            .message("AI service is currently unavailable or returned an error.")
+            .path(request.getRequestURI())
+            .build();
+
+    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+  }
+
+  @ExceptionHandler(AiRateLimitException.class)
+  public ResponseEntity<ErrorResponse> handleAiRateLimitException(
+      AiRateLimitException ex, HttpServletRequest request) {
+    log.error("AI rate limit exceeded: {}", ex.getMessage());
+
+    ErrorResponse errorResponse =
+        ErrorResponse.builder()
+            .status(HttpStatus.TOO_MANY_REQUESTS.value())
+            .error(HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase())
+            .message("AI service rate limit exceeded. Please try again later.")
+            .path(request.getRequestURI())
+            .build();
+
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)
