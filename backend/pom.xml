@@ -112,7 +112,20 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
-        <!-- ── JWT (JJWT 0.12) ───────────────────────────────────── -->
+        <!-- GraalVM Polyglot (JavaScript) -->
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>polyglot</artifactId>
+            <version>23.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>js</artifactId>
+            <version>23.1.2</version>
+            <type>pom</type>
+        </dependency>
+
+        <!-- 🚀 JWT (JJWT 0.12) ─────────────────────────────────────────── -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -234,6 +247,13 @@
                     -->
                     <excludedGroups>integration</excludedGroups>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.5.0</version>
+                <!-- This plugin is executed manually or via CI to generate SDKs 
+                     from the /v3/api-docs endpoint into the sdks/ directory -->
             </plugin>
         </plugins>
     </build>

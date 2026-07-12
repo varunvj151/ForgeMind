@@ -1,0 +1,26 @@
+{
+  "name": "forgemind-vscode",
+  "displayName": "ForgeMind AI Assistant",
+  "description": "IDE Integration for ForgeMind SaaS Platform",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "forgemind.startChat",
+        "title": "ForgeMind: Start AI Chat"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  }
+}
