@@ -182,5 +182,5 @@ public abstract class AbstractAgent<T> implements Agent<T> {
    * Internal carrier tying an agent's structured payload to the raw provider response that produced
    * it, so the base class can populate telemetry uniformly.
    */
-  protected record ExecutionResult<T>(T payload, AiResponse aiResponse) {}
+  public record ExecutionResult<T>(T payload, AiResponse aiResponse) {}
 }

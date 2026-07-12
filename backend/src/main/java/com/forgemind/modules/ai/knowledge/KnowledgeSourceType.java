@@ -6,5 +6,13 @@ public enum KnowledgeSourceType {
   TASK,
   ACTIVITY,
   TEAM,
-  DOCUMENTATION
+  DOCUMENTATION,
+  /** A connected Git repository. */
+  REPOSITORY,
+  /** A single indexed source file chunk from a repository. */
+  SOURCE_FILE,
+  /** A Git commit message and diff summary. */
+  COMMIT,
+  /** A Git pull request body and review comments. */
+  PULL_REQUEST
 }

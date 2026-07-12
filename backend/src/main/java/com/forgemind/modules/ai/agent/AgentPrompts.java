@@ -82,4 +82,68 @@ public final class AgentPrompts {
       "Document type: ${documentType}\n"
           + "Project and task context (JSON):\n${contextJson}\n\n"
           + "Write the ${documentType} document now.";
+
+  // ── Code Review ────────────────────────────────────────────────────────────
+  public static final String CODE_REVIEW_SYSTEM =
+      "You are an expert code reviewer and software engineer. Analyse the provided source code "
+          + "chunks and produce a structured review. Detect: code smells, SOLID violations, "
+          + "duplicate code, security issues (injection, exposed secrets, missing auth checks), "
+          + "performance issues, naming problems, missing validation, and missing test coverage. "
+          + "Respond with ONLY a valid JSON object (no markdown) with this shape: "
+          + "{\"score\": integer 0-100, \"summary\": string, "
+          + "\"issues\": [{\"severity\": \"INFO|WARNING|ERROR|CRITICAL\", \"category\": string, "
+          + "\"file\": string, \"line\": integer, \"description\": string, \"recommendation\": string}], "
+          + "\"positives\": [string], \"overallRecommendations\": [string]}. "
+          + "Score 100 = perfect code; deduct for each issue found. Be specific and actionable.";
+
+  public static final String CODE_REVIEW_USER =
+      "Repository: ${repositoryName}\n"
+          + "Language(s): ${languages}\n"
+          + "Files/Chunks to review (JSON):\n${codeChunks}\n\n"
+          + "Project context (JSON):\n${projectContext}\n\n"
+          + "Produce the code review.";
+
+  // ── Architecture Analysis ──────────────────────────────────────────────────
+  public static final String ARCHITECTURE_SYSTEM =
+      "You are a software architect specialising in large Java and TypeScript systems. Analyse the "
+          + "provided codebase structure, class names and package organisation. "
+          + "Detect: dependency cycles, god classes (too many responsibilities), tight coupling, "
+          + "missing abstractions, and naming inconsistencies. "
+          + "Respond with ONLY a valid JSON object (no markdown) with this shape: "
+          + "{\"summary\": string, "
+          + "\"modules\": [{\"name\": string, \"description\": string, \"fileCount\": integer}], "
+          + "\"risks\": [{\"severity\": \"LOW|MEDIUM|HIGH\", \"description\": string, \"affectedFiles\": [string], \"recommendation\": string}], "
+          + "\"refactoringOpportunities\": [string], "
+          + "\"technicalDebt\": string, "
+          + "\"overallHealthScore\": integer}. "
+          + "Be specific; reference actual file/class names from the provided context.";
+
+  public static final String ARCHITECTURE_USER =
+      "Repository: ${repositoryName}\n"
+          + "Primary language: ${primaryLanguage}\n"
+          + "File structure summary (JSON):\n${fileStructure}\n\n"
+          + "Recent code chunks (JSON):\n${codeChunks}\n\n"
+          + "Produce the architecture analysis.";
+
+  // ── Release Notes ──────────────────────────────────────────────────────────
+  public static final String RELEASE_NOTES_SYSTEM =
+      "You are a senior developer generating release notes for a software project. "
+          + "Use the provided commits, pull requests, and completed tasks to produce professional "
+          + "release notes suitable for a changelog or GitHub release. "
+          + "Respond with ONLY a valid JSON object (no markdown) with this shape: "
+          + "{\"version\": string, \"releasedAt\": string, \"highlights\": [string], "
+          + "\"features\": [string], \"bugfixes\": [string], \"improvements\": [string], "
+          + "\"breakingChanges\": [string], \"contributors\": [string], "
+          + "\"markdownSummary\": string}. "
+          + "markdownSummary should be a clean, human-readable markdown changelog section. "
+          + "Group entries logically; do not repeat items across sections.";
+
+  public static final String RELEASE_NOTES_USER =
+      "Version: ${version}\n"
+          + "Repository: ${repositoryName}\n"
+          + "Date range: ${dateFrom} to ${dateTo}\n\n"
+          + "Commits (JSON):\n${commitsJson}\n\n"
+          + "Pull requests (JSON):\n${pullRequestsJson}\n\n"
+          + "Completed tasks (JSON):\n${tasksJson}\n\n"
+          + "Generate the release notes.";
 }

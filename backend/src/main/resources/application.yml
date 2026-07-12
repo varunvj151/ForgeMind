@@ -125,6 +125,11 @@ app:
     top-k: ${RAG_TOP_K:5}
     min-score: ${RAG_MIN_SCORE:0.6}
     enabled: ${RAG_ENABLED:true}
+  git:
+    max-commits-per-sync: ${GIT_MAX_COMMITS_PER_SYNC:100}
+    max-files-per-sync: ${GIT_MAX_FILES_PER_SYNC:500}
+    max-file-size-bytes: ${GIT_MAX_FILE_SIZE_BYTES:102400}
+    webhook-signature-required: ${GIT_WEBHOOK_SIGNATURE_REQUIRED:false}
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:

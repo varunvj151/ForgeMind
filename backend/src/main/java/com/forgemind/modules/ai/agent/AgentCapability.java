@@ -27,5 +27,14 @@ public enum AgentCapability {
   SPRINT_PLANNING,
 
   /** Generate a stand-up report (yesterday / today / blockers / upcoming) from activity history. */
-  STANDUP
+  STANDUP,
+
+  /** Review source code chunks for smells, SOLID violations, security issues and performance issues. */
+  CODE_REVIEW,
+
+  /** Analyse repository architecture: dependency cycles, large classes, coupling and refactoring advice. */
+  ARCHITECTURE_ANALYSIS,
+
+  /** Generate release notes from commits, pull requests, activity and completed tasks. */
+  RELEASE_NOTES
 }
