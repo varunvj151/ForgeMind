@@ -1,0 +1,25 @@
+# ── Java / Maven ──────────────────────────────────────────────
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# ── Node / Frontend ───────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/.vite/
+frontend/tsconfig.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
+frontend/vite.config.js
+
+# ── IDE / OS ──────────────────────────────────────────────────
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+.env
+.env.local

@@ -7,6 +7,10 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
 
+  define: {
+    global: 'window',
+  },
+
   resolve: {
     alias: {
       // Enable absolute imports: import { Button } from '@/components/ui/button'

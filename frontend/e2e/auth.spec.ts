@@ -5,9 +5,9 @@ test.describe('Authentication Flow', () => {
     await page.goto('/login');
     
     // Check if the login form is visible
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
-    await expect(page.getByLabel('Username')).toBeVisible();
-    await expect(page.getByLabel('Password')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Welcome to ForgeMind/i })).toBeVisible();
+    await expect(page.getByLabel(/Email address/i)).toBeVisible();
+    await expect(page.getByLabel(/Password/i)).toBeVisible();
   });
 
   test('should show validation errors on empty submit', async ({ page }) => {
