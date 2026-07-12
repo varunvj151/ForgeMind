@@ -115,6 +115,16 @@ app:
     temperature: ${AI_TEMPERATURE:0.7}
     max-tokens: ${AI_MAX_TOKENS:2048}
     timeout-ms: ${AI_TIMEOUT_MS:30000}
+  embedding:
+    provider: ${EMBEDDING_PROVIDER:MOCK}
+    dimensions: ${EMBEDDING_DIMENSIONS:1536}
+    batch-size: ${EMBEDDING_BATCH_SIZE:32}
+    ollama-base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    ollama-model: ${OLLAMA_MODEL:nomic-embed-text}
+  rag:
+    top-k: ${RAG_TOP_K:5}
+    min-score: ${RAG_MIN_SCORE:0.6}
+    enabled: ${RAG_ENABLED:true}
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:

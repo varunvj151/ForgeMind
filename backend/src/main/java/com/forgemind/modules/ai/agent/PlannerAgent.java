@@ -10,6 +10,8 @@ import com.forgemind.modules.ai.memory.AgentMemory;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ public class PlannerAgent extends AbstractAgent<PlanResult> {
   public static final String PARAM_FEATURE = "featureDescription";
 
   private final AiContextBuilder contextBuilder;
+  private final RagOrchestrator ragOrchestrator;
 
   public PlannerAgent(
       AiProvider aiProvider,
@@ -36,9 +39,11 @@ public class PlannerAgent extends AbstractAgent<PlanResult> {
       ObjectMapper objectMapper,
       AgentAccessGuard accessGuard,
       AgentMetrics agentMetrics,
-      AiContextBuilder contextBuilder) {
+      AiContextBuilder contextBuilder,
+      RagOrchestrator ragOrchestrator) {
     super(aiProvider, promptTemplateManager, toolExecutor, objectMapper, accessGuard, agentMetrics);
     this.contextBuilder = contextBuilder;
+    this.ragOrchestrator = ragOrchestrator;
   }
 
   @Override
@@ -69,9 +74,11 @@ public class PlannerAgent extends AbstractAgent<PlanResult> {
     memory.put("context", context);
 
     String userPrompt =
-        promptTemplateManager.resolveTemplate(AgentPrompts.PLANNER_USER, context);
+        promptTemplateManager.resolveTemplate(AgentPrompts.PLANNER_USER, Map.of("description", feature));
 
-    AiResponse aiResponse = callProvider(AgentPrompts.PLANNER_SYSTEM, userPrompt, true);
+    RagContext ragContext = ragOrchestrator.augmentPrompt(request.getProjectId(), userPrompt);
+
+    AiResponse aiResponse = callProvider(AgentPrompts.PLANNER_SYSTEM, ragContext.augmentedPrompt(), true);
     memory.recordToolResult("provider", aiResponse.getContent());
 
     PlanResult plan = parseJsonObject(aiResponse.getContent(), PlanResult.class);

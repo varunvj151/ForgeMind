@@ -12,6 +12,7 @@ import com.forgemind.modules.activity.entity.ActivityType;
 import com.forgemind.modules.activity.service.ActivityService;
 import com.forgemind.modules.auth.entity.User;
 import com.forgemind.modules.auth.security.CurrentUserProvider;
+import org.springframework.context.ApplicationEventPublisher;
 import com.forgemind.modules.project.dto.request.ProjectRequest;
 import com.forgemind.modules.project.dto.response.ProjectResponse;
 import com.forgemind.modules.project.entity.Project;
@@ -40,6 +41,8 @@ class ProjectServiceImplTest {
   @Mock private CurrentUserProvider currentUserProvider;
 
   @Mock private ActivityService activityService;
+
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   @InjectMocks private ProjectServiceImpl projectService;
 

@@ -7,11 +7,14 @@ import com.forgemind.modules.ai.agent.dto.AgentRequest;
 import com.forgemind.modules.ai.agent.dto.StandupResult;
 import com.forgemind.modules.ai.agent.security.AgentAccessGuard;
 import com.forgemind.modules.ai.dto.AiResponse;
+import com.forgemind.modules.ai.context.AiContextBuilder;
 import com.forgemind.modules.ai.exception.AiProviderException;
 import com.forgemind.modules.ai.memory.AgentMemory;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import com.forgemind.modules.ai.tools.ToolNames;
 import com.forgemind.modules.ai.tools.impl.ActivityTool;
@@ -29,14 +32,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class StandupAgent extends AbstractAgent<StandupResult> {
 
+  private final AiContextBuilder contextBuilder;
+  private final RagOrchestrator ragOrchestrator;
+
   public StandupAgent(
       AiProvider aiProvider,
       PromptTemplateManager promptTemplateManager,
       ToolExecutor toolExecutor,
       ObjectMapper objectMapper,
       AgentAccessGuard accessGuard,
-      AgentMetrics agentMetrics) {
+      AgentMetrics agentMetrics,
+      AiContextBuilder contextBuilder,
+      RagOrchestrator ragOrchestrator) {
     super(aiProvider, promptTemplateManager, toolExecutor, objectMapper, accessGuard, agentMetrics);
+    this.contextBuilder = contextBuilder;
+    this.ragOrchestrator = ragOrchestrator;
   }
 
   @Override
@@ -67,7 +77,10 @@ public class StandupAgent extends AbstractAgent<StandupResult> {
     context.put("tasksJson", toJson(tasks));
 
     String userPrompt = promptTemplateManager.resolveTemplate(AgentPrompts.STANDUP_USER, context);
-    AiResponse aiResponse = callProvider(AgentPrompts.STANDUP_SYSTEM, userPrompt, true);
+    
+    RagContext ragContext = ragOrchestrator.augmentPrompt(request.getProjectId(), userPrompt);
+
+    AiResponse aiResponse = callProvider(AgentPrompts.STANDUP_SYSTEM, ragContext.augmentedPrompt(), true);
 
     StandupResult result = parseJsonObject(aiResponse.getContent(), StandupResult.class);
     return new ExecutionResult<>(result, aiResponse);

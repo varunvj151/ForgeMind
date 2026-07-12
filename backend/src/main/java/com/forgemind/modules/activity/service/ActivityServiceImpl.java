@@ -12,10 +12,12 @@ import com.forgemind.modules.auth.security.CurrentUserProvider;
 import com.forgemind.modules.project.repository.ProjectRepository;
 import com.forgemind.modules.realtime.service.RealTimeEventPublisher;
 import com.forgemind.modules.team.repository.TeamMemberRepository;
+import com.forgemind.modules.ai.indexing.events.ActivityRecordedEvent;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,6 +37,7 @@ public class ActivityServiceImpl implements ActivityService {
   private final TeamMemberRepository teamMemberRepository;
   private final ObjectMapper objectMapper;
   private final RealTimeEventPublisher realTimeEventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
   // ── Record ────────────────────────────────────────────────────────────────
 
@@ -86,6 +89,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     // Broadcast real-time event
     realTimeEventPublisher.publish(activity);
+    
+    // Trigger indexing if it belongs to a project
+    if (projectId != null && activity.getId() != null) {
+      eventPublisher.publishEvent(new ActivityRecordedEvent(this, activity.getId(), projectId));
+    }
   }
 
   // ── Project timeline ─────────────────────────────────────────────────────
@@ -143,5 +151,12 @@ public class ActivityServiceImpl implements ActivityService {
     return activityRepository
         .findByActorIdOrderByCreatedAtDesc(currentUser.getId(), pageable)
         .map(activityMapper::toResponse);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ActivityResponse getActivityById(UUID id) {
+    return activityRepository.findById(id).map(activityMapper::toResponse)
+        .orElseThrow(() -> new com.forgemind.common.exception.ResourceNotFoundException("ACTIVITY_NOT_FOUND", "Activity not found"));
   }
 }

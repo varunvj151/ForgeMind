@@ -11,6 +11,8 @@ import com.forgemind.modules.ai.memory.AgentMemory;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import com.forgemind.modules.ai.tools.ToolNames;
 import com.forgemind.modules.ai.tools.impl.MetricsTool;
@@ -31,6 +33,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SprintPlanningAgent extends AbstractAgent<SprintPlanResult> {
 
+  private final RagOrchestrator ragOrchestrator;
+
   public static final String PARAM_DURATION_DAYS = "sprintDurationDays";
   public static final String PARAM_TEAM_SIZE = "teamSize";
 
@@ -43,8 +47,10 @@ public class SprintPlanningAgent extends AbstractAgent<SprintPlanResult> {
       ToolExecutor toolExecutor,
       ObjectMapper objectMapper,
       AgentAccessGuard accessGuard,
-      AgentMetrics agentMetrics) {
+      AgentMetrics agentMetrics,
+      RagOrchestrator ragOrchestrator) {
     super(aiProvider, promptTemplateManager, toolExecutor, objectMapper, accessGuard, agentMetrics);
+    this.ragOrchestrator = ragOrchestrator;
   }
 
   @Override
@@ -86,7 +92,10 @@ public class SprintPlanningAgent extends AbstractAgent<SprintPlanResult> {
     context.put("tasksJson", toJson(tasks));
 
     String userPrompt = promptTemplateManager.resolveTemplate(AgentPrompts.SPRINT_USER, context);
-    AiResponse aiResponse = callProvider(AgentPrompts.SPRINT_SYSTEM, userPrompt, true);
+    
+    RagContext ragContext = ragOrchestrator.augmentPrompt(request.getProjectId(), userPrompt);
+
+    AiResponse aiResponse = callProvider(AgentPrompts.SPRINT_SYSTEM, ragContext.augmentedPrompt(), true);
 
     SprintPlanResult result = parseJsonObject(aiResponse.getContent(), SprintPlanResult.class);
     return new ExecutionResult<>(result, aiResponse);

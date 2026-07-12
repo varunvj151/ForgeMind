@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,11 +13,14 @@ import com.forgemind.modules.ai.agent.dto.AgentRequest;
 import com.forgemind.modules.ai.agent.dto.AgentResponse;
 import com.forgemind.modules.ai.agent.dto.RiskAnalysisResult;
 import com.forgemind.modules.ai.agent.security.AgentAccessGuard;
+import com.forgemind.modules.ai.context.AiContextBuilder;
 import com.forgemind.modules.ai.dto.AiRequest;
 import com.forgemind.modules.ai.dto.AiResponse;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import com.forgemind.modules.ai.tools.impl.ActivityTool;
 import com.forgemind.modules.ai.tools.impl.MetricsTool;
@@ -52,6 +56,8 @@ class RiskAnalysisAgentTest {
   @Mock private ActivityService activityService;
   @Mock private CurrentUserProvider currentUserProvider;
   @Mock private AiProvider aiProvider;
+  @Mock private AiContextBuilder contextBuilder;
+  @Mock private RagOrchestrator ragOrchestrator;
 
   private RiskAnalysisAgent agent;
   private final UUID projectId = UUID.randomUUID();
@@ -76,7 +82,7 @@ class RiskAnalysisAgentTest {
 
     agent =
         new RiskAnalysisAgent(
-            aiProvider, new PromptTemplateManager(), toolExecutor, objectMapper, guard, metrics);
+            aiProvider, new PromptTemplateManager(), toolExecutor, objectMapper, guard, metrics, contextBuilder, ragOrchestrator);
   }
 
   private ProjectResponse ownedProject() {
@@ -108,6 +114,8 @@ class RiskAnalysisAgentTest {
         new PageImpl<>(List.of());
     when(taskService.listProjectTasks(any(), any())).thenReturn(emptyTasks);
     when(activityService.getProjectActivities(any(), any())).thenReturn(emptyActivity);
+    when(ragOrchestrator.augmentPrompt(eq(projectId), any()))
+        .thenReturn(new RagContext("augmented prompt", java.util.List.of(), "augmented prompt", false));
 
     String json =
         "{\"riskScore\":40,\"riskLevel\":\"MEDIUM\",\"summary\":\"ok\","

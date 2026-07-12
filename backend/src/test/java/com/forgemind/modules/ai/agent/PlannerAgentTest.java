@@ -3,6 +3,7 @@ package com.forgemind.modules.ai.agent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,8 @@ import com.forgemind.modules.ai.dto.AiResponse;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import com.forgemind.modules.auth.entity.User;
 import com.forgemind.modules.auth.security.CurrentUserProvider;
@@ -43,6 +46,7 @@ class PlannerAgentTest {
   @Mock private CurrentUserProvider currentUserProvider;
   @Mock private ProjectService projectService;
   @Mock private ToolExecutor toolExecutor;
+  @Mock private RagOrchestrator ragOrchestrator;
 
   private PlannerAgent agent;
   private final UUID projectId = UUID.randomUUID();
@@ -60,7 +64,8 @@ class PlannerAgentTest {
             new ObjectMapper(),
             guard,
             metrics,
-            contextBuilder);
+            contextBuilder,
+            ragOrchestrator);
   }
 
   private void allowAccess() {
@@ -86,6 +91,8 @@ class PlannerAgentTest {
     Map<String, Object> ctx = new HashMap<>();
     ctx.put("contextJson", "{}");
     when(contextBuilder.buildProjectContext(projectId)).thenReturn(ctx);
+    when(ragOrchestrator.augmentPrompt(eq(projectId), any()))
+        .thenReturn(new RagContext("augmented prompt", java.util.List.of(), "augmented prompt", false));
 
     String json =
         "{\"featureSummary\":\"OAuth login\","

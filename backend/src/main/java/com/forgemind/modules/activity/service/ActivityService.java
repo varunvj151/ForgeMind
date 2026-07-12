@@ -44,4 +44,7 @@ public interface ActivityService {
 
   /** Retrieves the activity history for the currently authenticated user. */
   Page<ActivityResponse> getMyActivities(Pageable pageable);
+
+  /** Retrieves a specific activity by its ID. */
+  ActivityResponse getActivityById(UUID id);
 }

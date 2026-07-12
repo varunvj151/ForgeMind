@@ -17,9 +17,12 @@ import com.forgemind.modules.task.dto.response.TaskResponse;
 import com.forgemind.modules.task.entity.Task;
 import com.forgemind.modules.task.mapper.TaskMapper;
 import com.forgemind.modules.task.repository.TaskRepository;
+import com.forgemind.modules.ai.indexing.events.TaskCreatedEvent;
+import com.forgemind.modules.ai.indexing.events.TaskUpdatedEvent;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,6 +40,7 @@ public class TaskServiceImpl implements TaskService {
   private final TaskMapper taskMapper;
   private final CurrentUserProvider currentUserProvider;
   private final ActivityService activityService;
+  private final ApplicationEventPublisher eventPublisher;
 
   // ── Create ───────────────────────────────────────────────────────────────
 
@@ -72,6 +76,9 @@ public class TaskServiceImpl implements TaskService {
         null,
         saved.getId(),
         null);
+        
+    eventPublisher.publishEvent(new TaskCreatedEvent(this, saved.getId(), projectId));
+    
     return taskMapper.toResponse(saved);
   }
 
@@ -96,6 +103,9 @@ public class TaskServiceImpl implements TaskService {
         null,
         saved.getId(),
         null);
+        
+    eventPublisher.publishEvent(new TaskUpdatedEvent(this, saved.getId(), task.getProject().getId()));
+    
     return taskMapper.toResponse(saved);
   }
 
@@ -179,6 +189,9 @@ public class TaskServiceImpl implements TaskService {
           saved.getId(),
           java.util.Map.of("status", request.status().name()));
     }
+    
+    eventPublisher.publishEvent(new TaskUpdatedEvent(this, saved.getId(), task.getProject().getId()));
+    
     return taskMapper.toResponse(saved);
   }
 
@@ -207,6 +220,9 @@ public class TaskServiceImpl implements TaskService {
         null,
         saved.getId(),
         java.util.Map.of("priority", request.priority().name()));
+        
+    eventPublisher.publishEvent(new TaskUpdatedEvent(this, saved.getId(), task.getProject().getId()));
+    
     return taskMapper.toResponse(saved);
   }
 
@@ -242,6 +258,9 @@ public class TaskServiceImpl implements TaskService {
         saved.getId(),
         java.util.Map.of(
             "assigneeId", request.assigneeId() == null ? "unassigned" : request.assigneeId()));
+            
+    eventPublisher.publishEvent(new TaskUpdatedEvent(this, saved.getId(), task.getProject().getId()));
+    
     return taskMapper.toResponse(saved);
   }
 

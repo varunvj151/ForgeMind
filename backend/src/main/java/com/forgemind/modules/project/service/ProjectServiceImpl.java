@@ -10,9 +10,13 @@ import com.forgemind.modules.project.dto.response.ProjectResponse;
 import com.forgemind.modules.project.entity.Project;
 import com.forgemind.modules.project.mapper.ProjectMapper;
 import com.forgemind.modules.project.repository.ProjectRepository;
+import com.forgemind.modules.ai.indexing.events.ProjectCreatedEvent;
+import com.forgemind.modules.ai.indexing.events.ProjectDeletedEvent;
+import com.forgemind.modules.ai.indexing.events.ProjectUpdatedEvent;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,6 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
   private final ProjectMapper projectMapper;
   private final CurrentUserProvider currentUserProvider;
   private final ActivityService activityService;
+  private final ApplicationEventPublisher eventPublisher;
 
   // ── Create ───────────────────────────────────────────────────────────────
 
@@ -54,6 +59,9 @@ public class ProjectServiceImpl implements ProjectService {
         null,
         null,
         null);
+        
+    eventPublisher.publishEvent(new ProjectCreatedEvent(this, saved.getId()));
+    
     return projectMapper.toResponse(saved);
   }
 
@@ -94,6 +102,9 @@ public class ProjectServiceImpl implements ProjectService {
         null,
         null,
         null);
+        
+    eventPublisher.publishEvent(new ProjectUpdatedEvent(this, saved.getId()));
+    
     return projectMapper.toResponse(saved);
   }
 
@@ -116,6 +127,8 @@ public class ProjectServiceImpl implements ProjectService {
         null,
         null,
         null);
+        
+    eventPublisher.publishEvent(new ProjectDeletedEvent(this, id));
   }
 
   // ── Private helpers ──────────────────────────────────────────────────────

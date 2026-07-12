@@ -13,6 +13,7 @@ import com.forgemind.modules.activity.service.ActivityService;
 import com.forgemind.modules.auth.entity.User;
 import com.forgemind.modules.auth.repository.UserRepository;
 import com.forgemind.modules.auth.security.CurrentUserProvider;
+import org.springframework.context.ApplicationEventPublisher;
 import com.forgemind.modules.project.entity.Project;
 import com.forgemind.modules.project.repository.ProjectRepository;
 import com.forgemind.modules.task.dto.request.CreateTaskRequest;
@@ -48,6 +49,8 @@ class TaskServiceImplTest {
   @Mock private CurrentUserProvider currentUserProvider;
 
   @Mock private ActivityService activityService;
+
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   @InjectMocks private TaskServiceImpl taskService;
 

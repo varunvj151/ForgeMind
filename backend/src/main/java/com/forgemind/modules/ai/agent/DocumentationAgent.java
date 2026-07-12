@@ -10,6 +10,8 @@ import com.forgemind.modules.ai.memory.AgentMemory;
 import com.forgemind.modules.ai.observability.AgentMetrics;
 import com.forgemind.modules.ai.prompt.PromptTemplateManager;
 import com.forgemind.modules.ai.provider.AiProvider;
+import com.forgemind.modules.ai.rag.RagContext;
+import com.forgemind.modules.ai.rag.RagOrchestrator;
 import com.forgemind.modules.ai.tools.ToolExecutor;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +38,7 @@ public class DocumentationAgent extends AbstractAgent<DocumentationResult> {
       Set.of("README", "ARCHITECTURE", "API", "RELEASE_NOTES", "SPRINT_REPORT", "SUMMARY");
 
   private final AiContextBuilder contextBuilder;
+  private final RagOrchestrator ragOrchestrator;
 
   public DocumentationAgent(
       AiProvider aiProvider,
@@ -44,9 +47,11 @@ public class DocumentationAgent extends AbstractAgent<DocumentationResult> {
       ObjectMapper objectMapper,
       AgentAccessGuard accessGuard,
       AgentMetrics agentMetrics,
-      AiContextBuilder contextBuilder) {
+      AiContextBuilder contextBuilder,
+      RagOrchestrator ragOrchestrator) {
     super(aiProvider, promptTemplateManager, toolExecutor, objectMapper, accessGuard, agentMetrics);
     this.contextBuilder = contextBuilder;
+    this.ragOrchestrator = ragOrchestrator;
   }
 
   @Override
@@ -79,8 +84,10 @@ public class DocumentationAgent extends AbstractAgent<DocumentationResult> {
         promptTemplateManager.resolveTemplate(AgentPrompts.DOC_SYSTEM, context);
     String userPrompt = promptTemplateManager.resolveTemplate(AgentPrompts.DOC_USER, context);
 
+    RagContext ragContext = ragOrchestrator.augmentPrompt(request.getProjectId(), userPrompt);
+
     // Documentation is free-form markdown → text mode, not JSON.
-    AiResponse aiResponse = callProvider(systemPrompt, userPrompt, false);
+    AiResponse aiResponse = callProvider(systemPrompt, ragContext.augmentedPrompt(), false);
 
     DocumentationResult result =
         new DocumentationResult(docType, docType + " Documentation", aiResponse.getContent());
