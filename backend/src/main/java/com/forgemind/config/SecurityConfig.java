@@ -3,6 +3,8 @@ package com.forgemind.config;
 import com.forgemind.modules.auth.security.JwtAuthenticationEntryPoint;
 import com.forgemind.modules.auth.security.JwtAuthenticationFilter;
 import com.forgemind.modules.auth.security.UserDetailsServiceImpl;
+import com.forgemind.modules.organization.ratelimit.RateLimitFilter;
+import com.forgemind.modules.organization.security.TenantResolutionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +54,8 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final UserDetailsServiceImpl userDetailsService;
+  private final TenantResolutionFilter tenantResolutionFilter;
+  private final RateLimitFilter rateLimitFilter;
 
   /**
    * Paths that never require a JWT token. Keep this list minimal — prefer method-level
@@ -96,7 +100,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             auth -> auth.requestMatchers(PUBLIC_PATHS).permitAll().anyRequest().authenticated())
         .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterAfter(tenantResolutionFilter, JwtAuthenticationFilter.class)
+        .addFilterAfter(rateLimitFilter, TenantResolutionFilter.class);
 
     return http.build();
   }
