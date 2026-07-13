@@ -1,6 +1,8 @@
 package com.forgemind.modules.git.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,6 +39,7 @@ class GitControllerIntegrationTest {
   @MockBean private GitSyncService gitSyncService;
   @MockBean private com.forgemind.modules.auth.security.JwtService jwtService;
   @MockBean private com.forgemind.modules.auth.security.CurrentUserProvider currentUserProvider;
+  @MockBean private com.forgemind.modules.organization.ratelimit.InMemoryRateLimiter rateLimiter;
 
   private User mockUser;
 
@@ -50,6 +53,11 @@ class GitControllerIntegrationTest {
     SecurityContextHolder.getContext().setAuthentication(
         new UsernamePasswordAuthenticationToken(mockUser, null, List.of())
     );
+
+    // Bypass rate limits so tests never get 429
+    when(rateLimiter.tryConsume(anyString())).thenReturn(true);
+    when(rateLimiter.tryConsume(anyString(), anyInt(), anyInt())).thenReturn(true);
+    when(rateLimiter.getRemaining(anyString())).thenReturn(999L);
   }
 
   @Test

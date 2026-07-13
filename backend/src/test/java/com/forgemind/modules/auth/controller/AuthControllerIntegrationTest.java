@@ -1,5 +1,8 @@
 package com.forgemind.modules.auth.controller;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -8,6 +11,7 @@ import com.forgemind.modules.auth.dto.RegisterRequest;
 import com.forgemind.modules.auth.entity.Role;
 import com.forgemind.modules.auth.repository.RoleRepository;
 import com.forgemind.modules.auth.repository.UserRepository;
+import com.forgemind.modules.organization.ratelimit.InMemoryRateLimiter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +54,8 @@ class AuthControllerIntegrationTest {
 
   @MockBean private ReactiveRedisConnectionFactory reactiveRedisConnectionFactory;
 
+  @MockBean private InMemoryRateLimiter rateLimiter;
+
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
@@ -57,6 +63,10 @@ class AuthControllerIntegrationTest {
     // Flyway is disabled in tests — seed the default role manually
     roleRepository.save(
         Role.builder().name("ROLE_USER").description("Standard authenticated user").build());
+    // Bypass rate limits so tests never get 429
+    when(rateLimiter.tryConsume(anyString())).thenReturn(true);
+    when(rateLimiter.tryConsume(anyString(), anyInt(), anyInt())).thenReturn(true);
+    when(rateLimiter.getRemaining(anyString())).thenReturn(999L);
   }
 
   // ── Success ────────────────────────────────────────────────────────────────

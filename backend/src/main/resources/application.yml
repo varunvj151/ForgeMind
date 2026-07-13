@@ -56,6 +56,27 @@ spring:
   websocket:
     enabled: true
 
+  # ── RabbitMQ & Kafka ────────────────────────────────────────────────────────
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: /
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+    consumer:
+      group-id: forgemind-consumer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
 # ── Server ───────────────────────────────────────────────────────────────────
 server:
   port: ${APP_PORT:8080}
@@ -130,6 +151,22 @@ app:
     max-files-per-sync: ${GIT_MAX_FILES_PER_SYNC:500}
     max-file-size-bytes: ${GIT_MAX_FILE_SIZE_BYTES:102400}
     webhook-signature-required: ${GIT_WEBHOOK_SIGNATURE_REQUIRED:false}
+  # ── Cache Provider ─────────────────────────────────────────────────────────
+  cache:
+    provider: ${CACHE_PROVIDER:redis}    # redis | local
+
+  # ── Storage Provider ───────────────────────────────────────────────────────
+  storage:
+    provider: ${STORAGE_PROVIDER:local}  # local | s3
+    local:
+      base-path: ${STORAGE_LOCAL_PATH:/tmp/forgemind/storage}
+    s3:
+      bucket: ${S3_BUCKET:forgemind-storage}
+      region: ${AWS_REGION:us-east-1}
+
+  # ── Event Bus Provider ─────────────────────────────────────────────────────
+  eventbus:
+    provider: ${EVENTBUS_PROVIDER:spring}  # spring | rabbitmq | kafka
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: forgemind
+  labels:
+    app.kubernetes.io/name: forgemind
+    environment: production

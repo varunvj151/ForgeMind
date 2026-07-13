@@ -24,20 +24,58 @@ spring:
       name: test
       password: test
 
+  # Disable OTel auto-config entirely in tests — avoids DoubleGauge ClassNotFoundError
+  autoconfigure:
+    exclude:
+      - io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration
+
 logging:
   level:
     root: WARN
     com.forgemind: DEBUG
 
-# ── JWT properties required by JwtProperties @ConfigurationProperties ─────────
+# ── App properties required by tests ──────────────────────────────────────────
 app:
   jwt:
     secret: dGVzdC1zZWNyZXQta2V5LW11c3QtYmUtYXQtbGVhc3QtMzItY2hhcmFjdGVycy1sb25n
     expiration-ms: 3600000
     refresh-expiration-ms: 604800000
+  ai:
+    provider: MOCK
+    api-key: ""
+    model: mock
+    temperature: 0.7
+    max-tokens: 512
+    timeout-ms: 5000
+  embedding:
+    provider: MOCK
+    dimensions: 1536
+    batch-size: 32
+    ollama-base-url: http://localhost:11434
+    ollama-model: nomic-embed-text
+  rag:
+    enabled: false
+    top-k: 5
+    min-score: 0.6
+  git:
+    max-commits-per-sync: 10
+    max-files-per-sync: 50
+    max-file-size-bytes: 10240
+    webhook-signature-required: false
+  cache:
+    provider: local
+  storage:
+    provider: local
+    local:
+      base-path: /tmp/forgemind-test/storage
+  eventbus:
+    provider: spring
+  cors:
+    allowed-origins: http://localhost:5173
+  workspace:
+    base-path: /tmp/forgemind-test/workspaces
 
 management:
   health:
     redis:
       enabled: false
-

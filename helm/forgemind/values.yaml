@@ -1,0 +1,55 @@
+replicaCount: 3
+
+image:
+  backend:
+    repository: forgemind/backend
+    tag: latest
+    pullPolicy: Always
+  frontend:
+    repository: forgemind/frontend
+    tag: latest
+    pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: api.forgemind.dev
+  tls: true
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+resources:
+  backend:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+postgres:
+  host: postgres-service
+  port: 5432
+  database: forgemind
+
+redis:
+  host: redis-service
+  port: 6379
+
+config:
+  appEnv: production
+  ragEnabled: true
+  ragTopK: 5
+  embeddingProvider: MOCK
+
+otel:
+  enabled: true
+  endpoint: http://otel-collector:4317

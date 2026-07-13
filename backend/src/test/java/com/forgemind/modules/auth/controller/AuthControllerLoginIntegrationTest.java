@@ -1,6 +1,10 @@
 package com.forgemind.modules.auth.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -11,6 +15,7 @@ import com.forgemind.modules.auth.entity.Role;
 import com.forgemind.modules.auth.repository.RefreshTokenRepository;
 import com.forgemind.modules.auth.repository.RoleRepository;
 import com.forgemind.modules.auth.repository.UserRepository;
+import com.forgemind.modules.organization.ratelimit.InMemoryRateLimiter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +55,7 @@ class AuthControllerLoginIntegrationTest {
 
   @MockBean private RedisConnectionFactory redisConnectionFactory;
   @MockBean private ReactiveRedisConnectionFactory reactiveRedisConnectionFactory;
+  @MockBean private InMemoryRateLimiter rateLimiter;
 
   private static final String REGISTER_URL = "/api/v1/auth/register";
   private static final String LOGIN_URL = "/api/v1/auth/login";
@@ -62,6 +68,11 @@ class AuthControllerLoginIntegrationTest {
     roleRepository.deleteAll();
     roleRepository.save(
         Role.builder().name("ROLE_USER").description("Standard authenticated user").build());
+
+    // Bypass rate limits so tests never get 429
+    when(rateLimiter.tryConsume(anyString())).thenReturn(true);
+    when(rateLimiter.tryConsume(anyString(), anyInt(), anyInt())).thenReturn(true);
+    when(rateLimiter.getRemaining(anyString())).thenReturn(999L);
 
     // Register a user that all login tests can use
     RegisterRequest reg =

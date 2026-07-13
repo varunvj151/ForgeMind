@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgemind-config
+  namespace: forgemind
+data:
+  APP_ENV: "production"
+  APP_PORT: "8080"
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "forgemind"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  EMBEDDING_PROVIDER: "MOCK"
+  EMBEDDING_DIMENSIONS: "1536"
+  RAG_ENABLED: "true"
+  RAG_TOP_K: "5"
+  GIT_MAX_COMMITS_PER_SYNC: "100"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+  OTEL_SERVICE_NAME: "forgemind-backend"
